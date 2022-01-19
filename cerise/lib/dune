@@ -1,0 +1,7 @@
+(library
+ (name cerise_lib)
+ (libraries bio_io cmdliner core shexp.process command_runner)
+ (instrumentation
+  (backend bisect_ppx))
+ (preprocess
+  (pps ppx_jane)))

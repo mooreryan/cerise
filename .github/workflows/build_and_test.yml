@@ -1,0 +1,112 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'staging'
+  pull_request:
+    branches:
+      - '*'
+
+env:
+  PROGRAM_NAME: cerise
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+        ocaml-compiler:
+          - 4.13.1
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - run: echo "LOCAL_PATH=$HOME/.local/bin" >> $GITHUB_ENV
+      - run: echo "CLUSTALO_EXE=$LOCAL_PATH/clustalo" >> $GITHUB_ENV
+      - run: echo "MMSEQS_EXE=$LOCAL_PATH/mmseqs" >> $GITHUB_ENV
+
+      - name: Setup path
+        run: |
+          mkdir -p "$LOCAL_PATH"
+          echo "$LOCAL_PATH" >> $GITHUB_PATH
+
+      - name: Download MMseqs2 (Linux)
+        run: |
+          wget https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz; tar xvfz mmseqs-linux-avx2.tar.gz; mv $(pwd)/mmseqs/bin/mmseqs > "$MMSEQS_EXE"
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Download MMseqs2 (MacOS)
+        run: |
+          wget https://mmseqs.com/latest/mmseqs-osx-universal.tar.gz; tar xvfz mmseqs-osx-universal.tar.gz; mv $(pwd)/mmseqs/bin/mmseqs > "$MMSEQS_EXE"
+        if: matrix.os == 'macos-latest'
+
+      - name: Setup and check Clustal Omega
+        run: |
+          chmod 755 "$MMSEQS_EXE"
+          mmseqs -h
+
+      - name: Install BLAST
+        run: |
+          wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.12.0+-src.tar.gz;
+          tar xzf ncbi-blast-2.12.0+-src.tar.gz;
+          (cd ncbi-blast-2.12.0+-src/c++/ && ./configure && make -j4 && make install)
+
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          dune-cache: true
+          cache-prefix: v1-${{ matrix.os }}
+
+      - name: Install Cerise OCaml deps (Ubuntu)
+        run: opam update && (cd cerise $$ opam install . --deps-only --with-doc --with-test)
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Install Cerise OCaml deps (MacOS)
+        run: opam update && (cd cerise && opam install . --jobs 1 --deps-only --with-doc --with-test)
+        if: matrix.os == 'macos-latest'
+
+      - name: Install CommandRunner OCaml deps (Ubuntu)
+        run: opam update && (cd command_runner $$ opam install . --deps-only --with-doc --with-test)
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Install CommandRunner OCaml deps (MacOS)
+        run: opam update && (cd command_runner && opam install . --jobs 1 --deps-only --with-doc --with-test)
+        if: matrix.os == 'macos-latest'
+
+      - name: Test (Ubuntu)
+        run: opam exec -- make test
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Test (MacOS)
+        run: opam exec -- make test_mac
+        if: matrix.os == 'macos-latest'
+
+      - run: opam exec -- make send_coverage
+        if: matrix.ocaml-compiler == '4.13.1'
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build (Ubuntu)
+        run: opam exec -- make build_release
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Build (MacOS)
+        run: opam exec -- make build_release_mac
+        if: matrix.os == 'macos-latest'
+
+      - name: Upload the build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PROGRAM_NAME }}-${{ matrix.os }}
+          path: _build/install/default/bin/${{ env.PROGRAM_NAME }}

@@ -1,0 +1,22 @@
+(lang dune 2.9)
+(generate_opam_files true)
+
+(name command_runner)
+
+(package
+ (name command_runner)
+ (version 0.1.0)
+ (license "MIT")
+ (maintainers "Ryan M. Moore")
+ (authors "Ryan M. Moore")
+ (homepage "https://github.com/mooreryan/cerise")
+ (source (github mooreryan/cerise))
+ (documentation "https://mooreryan.github.io/cerise/")
+ (bug_reports "https://github.com/mooreryan/cerise/issues")
+ (synopsis "A generalized command runner leveraging shexp")
+ (depends
+  (base (>= "v0.14"))
+  (shexp (>= "v0.14"))
+  (stdio (>= "v0.14"))
+  ; Development dependencies
+  (bisect_ppx :dev)))

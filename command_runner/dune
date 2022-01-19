@@ -1,0 +1,6 @@
+(library
+ (name command_runner)
+ (public_name command_runner)
+ (libraries base shexp.process stdio)
+ (instrumentation
+  (backend bisect_ppx)))

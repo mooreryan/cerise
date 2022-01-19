@@ -1,0 +1,28 @@
+(lang dune 2.9)
+(generate_opam_files true)
+(cram enable)
+
+(name cerise)
+
+(package
+ (name cerise)
+ (version 0.1.0)
+ (license "MIT")
+ (maintainers "Ryan M. Moore")
+ (authors "Ryan M. Moore")
+ (homepage "https://github.com/mooreryan/cerise")
+ (source (github mooreryan/cerise))
+ (documentation "https://mooreryan.github.io/cerise/")
+ (bug_reports "https://github.com/mooreryan/cerise/issues")
+ (synopsis "CERISE:  ClustEr RestrIcted homology SEarch")
+ (description "Cerise is both a deep, reddish-pink color and a pipeline for speeding \
+         up homology searches without compromising precision and recall (Nasko \
+         et al., 2018; https://doi.org/10.1101/426098).")
+ (depends
+  (bio_io (>= "0.4"))
+  (cmdliner (>= "1.0"))
+  (core (>= "v0.14"))
+  (ppx_jane (>= "v0.14"))
+  (shexp (>= "v0.14"))
+  ; Development dependencies
+  (bisect_ppx :dev)))
