@@ -18,5 +18,5 @@
   (base (>= "v0.14"))
   (shexp (>= "v0.14"))
   (stdio (>= "v0.14"))
-  ; Development dependencies
-  (bisect_ppx :dev)))
+  ; Test only deps
+  (bisect_ppx :with-test)))

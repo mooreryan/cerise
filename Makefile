@@ -11,6 +11,10 @@ all: build_release install
 build:
 	dune build
 
+.PHONY: build_mac
+build_mac:
+	dune build -j 1
+
 .PHONY: build_release
 build_release:
 	dune build --profile=release

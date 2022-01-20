@@ -13,7 +13,7 @@ depends: [
   "base" {>= "v0.14"}
   "shexp" {>= "v0.14"}
   "stdio" {>= "v0.14"}
-  "bisect_ppx" {dev}
+  "bisect_ppx" {with-test}
   "odoc" {with-doc}
 ]
 build: [
