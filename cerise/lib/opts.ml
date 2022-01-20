@@ -8,15 +8,14 @@ type t = {
   outdir : string;
   basename : string;
   force : bool;
-  evalue : float;
   search_program : string;
   extra_config : string option;
   all_queries : string option;
   all_targets : string option;
 }
 
-let make queries targets query_clusters target_clusters outdir force evalue
-    basename search_program extra_config all_queries all_targets =
+let make queries targets query_clusters target_clusters outdir force basename
+    search_program extra_config all_queries all_targets =
   {
     queries;
     targets;
@@ -24,7 +23,6 @@ let make queries targets query_clusters target_clusters outdir force evalue
     target_clusters;
     outdir;
     force;
-    evalue;
     basename;
     search_program;
     extra_config;

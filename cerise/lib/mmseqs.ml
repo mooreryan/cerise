@@ -7,23 +7,12 @@ module Command = struct
     targets : string;
     outfile : string;
     tmpdir : string;
-    evalue : float;
   }
 
   type t = { name : string; args : string list; config : config }
 
-  let make ({ exe; queries; targets; outfile; tmpdir; evalue } as config) =
-    let args =
-      [
-        "easy-search";
-        queries;
-        targets;
-        outfile;
-        tmpdir;
-        "-e";
-        Float.to_string evalue;
-      ]
-    in
+  let make ({ exe; queries; targets; outfile; tmpdir } as config) =
+    let args = [ "easy-search"; queries; targets; outfile; tmpdir ] in
     { name = exe; args; config }
 
   let check { config; _ } =

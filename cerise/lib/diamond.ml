@@ -6,26 +6,14 @@ module Blastp_command = struct
     queries : string;
     targets : string;
     outfile : string;
-    evalue : float;
   }
 
   type t = { name : string; args : string list; config : config }
 
-  let make ({ exe; queries; targets; outfile; evalue } as config) =
+  let make ({ exe; queries; targets; outfile } as config) =
     {
       name = exe;
-      args =
-        [
-          "blastp";
-          "-q";
-          queries;
-          "-d";
-          targets;
-          "-o";
-          outfile;
-          "-e";
-          Float.to_string evalue;
-        ];
+      args = [ "blastp"; "-q"; queries; "-d"; targets; "-o"; outfile ];
       config;
     }
 
@@ -62,7 +50,6 @@ module Runner = struct
       targets : string;
       outdir : string;
       outfile : string;
-      evalue : float;
     }
 
     type t = {
@@ -76,7 +63,7 @@ module Runner = struct
     let make_blastp_runner config ~extra_config =
       Command_runner.Runner.make ?extra_config (module Blastp_command) config
 
-    let make ?extra_config { exe; queries; targets; outdir; outfile; evalue } =
+    let make ?extra_config { exe; queries; targets; outdir; outfile } =
       let blastdb_out_base = Filename.temp_file ~in_dir:outdir "db" "" in
       (* let blastdb_out_file = blastdb_out_base ^ ".dmnd" in *)
       let makedb_cmd_config =
@@ -87,7 +74,7 @@ module Runner = struct
         }
       in
       let blastp_cmd_config : Blastp_command.config =
-        { exe; queries; targets = blastdb_out_base; outfile; evalue }
+        { exe; queries; targets = blastdb_out_base; outfile }
       in
       {
         makedb_runner = make_makedb_runner makedb_cmd_config;

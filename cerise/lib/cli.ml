@@ -68,15 +68,11 @@ let force_term =
   let doc = "If the outdir already exists, just keep going." in
   Arg.(value & flag & info [ "f"; "force" ] ~doc)
 
-let evalue_term =
-  let doc = "E-Value to consider a hit as significant." in
-  Arg.(value & opt float 1e-3 & info [ "e"; "evalue" ] ~docv:"E-VALUE" ~doc)
-
 let term =
   Term.(
     const Opts.make $ queries_term $ targets_term $ query_clusters_term
-    $ target_clusters_term $ outdir_term $ force_term $ evalue_term
-    $ basename_term $ search_program_term $ extra_config_term $ all_queries_term
+    $ target_clusters_term $ outdir_term $ force_term $ basename_term
+    $ search_program_term $ extra_config_term $ all_queries_term
     $ all_targets_term)
 
 let info =

@@ -8,7 +8,7 @@ let make_outfile_name opts suffix =
 let make_outdir opts = Unix.mkdir_p ~perm:0o775 opts.Opts.outdir
 
 let make_runner ~extra_config ~outdir ~outfile ~search_program ~queries ~targets
-    ~evalue () : (module Command_runner.Abstract_runner.Instance.S) =
+    () : (module Command_runner.Abstract_runner.Instance.S) =
   match search_program with
   | "blast" ->
       Blast.Runner.to_abstract_runner
@@ -20,17 +20,16 @@ let make_runner ~extra_config ~outdir ~outfile ~search_program ~queries ~targets
              targets;
              outdir;
              outfile;
-             evalue;
            }
   | "mmseqs" ->
       let tmpdir = make_tmpdir () in
       Mmseqs.Runner.to_abstract_runner
       @@ Mmseqs.Runner.make ?extra_config
-           { exe = "mmseqs"; queries; targets; outfile; evalue; tmpdir }
+           { exe = "mmseqs"; queries; targets; outfile; tmpdir }
   | "diamond" ->
       Diamond.Runner.to_abstract_runner
       @@ Diamond.Runner.make ?extra_config
-           { exe = "diamond"; queries; targets; outdir; outfile; evalue }
+           { exe = "diamond"; queries; targets; outdir; outfile }
   | _ -> failwith "search_program must be either mmseqs or blastp"
 
 (* Sligthly confusing function as different things will happen depending on
@@ -54,7 +53,7 @@ let run_first_search ~extra_config ~opts =
   let first_search_runner =
     make_runner ~extra_config ~outdir:opts.outdir ~outfile:first_search_outfile
       ~search_program:opts.search_program ~queries:opts.queries
-      ~targets:opts.targets ~evalue:opts.evalue ()
+      ~targets:opts.targets ()
   in
   Command_runner.Abstract_runner.run first_search_runner;
   first_search_outfile
@@ -64,7 +63,7 @@ let run_second_search ~extra_config ~opts ~new_query_infile ~new_target_infile =
   let second_search_runner =
     make_runner ~extra_config ~outdir:opts.outdir ~outfile:second_search_outfile
       ~search_program:opts.search_program ~queries:new_query_infile
-      ~targets:new_target_infile ~evalue:opts.evalue ()
+      ~targets:new_target_infile ()
   in
   Command_runner.Abstract_runner.run second_search_runner;
   second_search_outfile
