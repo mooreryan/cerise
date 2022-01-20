@@ -62,8 +62,14 @@ let check opts =
            neither should be present"
     | Some _, Some _ | None, None -> ()
   in
+  let check_search_program opts =
+    match opts.search_program with
+    | "blast" | "mmseqs" | "diamond" -> ()
+    | _ -> failwith "--search-program must be one of blast, mmseqs, or diamond"
+  in
   check_cluster_inputs opts;
   check_outdir opts;
   check_queries opts;
   check_targets opts;
+  check_search_program opts;
   ()

@@ -7,10 +7,10 @@ let make_outfile_name opts suffix =
 
 let make_outdir opts = Unix.mkdir_p ~perm:0o775 opts.Opts.outdir
 
-let make_runner ~extra_config ~outfile ~search_program ~queries ~targets ~evalue
-    () : (module Command_runner.Abstract_runner.Instance.S) =
+let make_runner ~extra_config ~outdir ~outfile ~search_program ~queries ~targets
+    ~evalue () : (module Command_runner.Abstract_runner.Instance.S) =
   match search_program with
-  | "blastp" ->
+  | "blast" ->
       Blast.Runner.to_abstract_runner
       @@ Blast.Runner.make ?extra_config
            {
@@ -26,6 +26,10 @@ let make_runner ~extra_config ~outfile ~search_program ~queries ~targets ~evalue
       Mmseqs.Runner.to_abstract_runner
       @@ Mmseqs.Runner.make ?extra_config
            { exe = "mmseqs"; queries; targets; outfile; evalue; tmpdir }
+  | "diamond" ->
+      Diamond.Runner.to_abstract_runner
+      @@ Diamond.Runner.make ?extra_config
+           { exe = "diamond"; queries; targets; outdir; outfile; evalue }
   | _ -> failwith "search_program must be either mmseqs or blastp"
 
 (* Sligthly confusing function as different things will happen depending on
@@ -47,7 +51,7 @@ let make_new_search_infile ~orig_seq_file ~new_seq_file ~new_seqs
 let run_first_search ~extra_config ~opts =
   let first_search_outfile = make_outfile_name opts ".first_search.tsv" in
   let first_search_runner =
-    make_runner ~extra_config ~outfile:first_search_outfile
+    make_runner ~extra_config ~outdir:opts.outdir ~outfile:first_search_outfile
       ~search_program:opts.search_program ~queries:opts.queries
       ~targets:opts.targets ~evalue:opts.evalue ()
   in
@@ -57,7 +61,7 @@ let run_first_search ~extra_config ~opts =
 let run_second_search ~extra_config ~opts ~new_query_infile ~new_target_infile =
   let second_search_outfile = make_outfile_name opts ".second_search.tsv" in
   let second_search_runner =
-    make_runner ~extra_config ~outfile:second_search_outfile
+    make_runner ~extra_config ~outdir:opts.outdir ~outfile:second_search_outfile
       ~search_program:opts.search_program ~queries:new_query_infile
       ~targets:new_target_infile ~evalue:opts.evalue ()
   in
