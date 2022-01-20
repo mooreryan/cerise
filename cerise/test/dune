@@ -1,3 +1,5 @@
 (cram
+ (applies_to :whole_subtree)
  (deps
-   %{bin:cerise}))
+   %{bin:cerise}
+   ./helpers/sanitize_logs))

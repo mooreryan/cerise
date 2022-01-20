@@ -44,12 +44,40 @@ Missing "all seqs" files.
 
 Queries and targets clustered
 
+  $ if [ -d cerise_out ]; then rm -r cerise_out; fi
   $ cerise clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --extra-config extra_config.txt > cerise_oe 2>&1
-  $ ls cerise_out | diff - expected_outfiles__both.txt
+  $ ls cerise_out
+  cerise.first_search.tsv
+  cerise.new_queries.fasta
+  cerise.new_targets.fasta
+  cerise.second_search.tsv
+  command_logs.txt
   $ grep '^>' cerise_out/cerise.new_queries.fasta | cut -f1 -d' ' | sort | diff - expected_new_queries__both.txt
   $ grep '^>' cerise_out/cerise.new_targets.fasta | cut -f1 -d' ' | sort | diff - expected_new_targets__both.txt
   $ sort -k1,2 cerise_out/cerise.first_search.tsv | cut -f1,2 | diff - expected_first_search__both.tsv
   $ sort -k1,2 cerise_out/cerise.second_search.tsv | cut -f1,2 | diff - expected_second_search__both.tsv
+
+Queries and targets clustered (verbose)
+
+  $ if [ -d cerise_out ]; then rm -r cerise_out; fi
+  $ cerise -vv clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --extra-config extra_config.txt > cerise_oe 2>&1
+  $ ../helpers/sanitize_logs cerise_oe
+  I, [DATE TIME PID] INFO -- Setting up first search
+  I, [DATE TIME PID] INFO -- Running first search
+  I, [DATE TIME PID] INFO -- Setting up second search
+  I, [DATE TIME PID] INFO -- Running second search
+  I, [DATE TIME PID] INFO -- The final outfile is cerise_out/cerise.second_search.tsv
+  $ ls cerise_out
+  cerise.first_search.tsv
+  cerise.new_queries.fasta
+  cerise.new_targets.fasta
+  cerise.second_search.tsv
+  command_logs.txt
+  $ grep '^>' cerise_out/cerise.new_queries.fasta | cut -f1 -d' ' | sort | diff - expected_new_queries__both.txt
+  $ grep '^>' cerise_out/cerise.new_targets.fasta | cut -f1 -d' ' | sort | diff - expected_new_targets__both.txt
+  $ sort -k1,2 cerise_out/cerise.first_search.tsv | cut -f1,2 | diff - expected_first_search__both.tsv
+  $ sort -k1,2 cerise_out/cerise.second_search.tsv | cut -f1,2 | diff - expected_second_search__both.tsv
+
 
 Just queries clustered.  Note that the file names are a bit
 misleading.  I'm using the clustered files to make checking the output
@@ -58,7 +86,11 @@ clarification.
 
   $ if [ -d cerise_out ]; then rm -r cerise_out; fi
   $ cerise clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --all-queries queries.fasta --extra-config extra_config.txt > cerise_oe 2>&1
-  $ ls cerise_out | diff - expected_outfiles__clustered_queries.txt
+  $ ls cerise_out
+  cerise.first_search.tsv
+  cerise.new_queries.fasta
+  cerise.second_search.tsv
+  command_logs.txt
   $ grep '^>' cerise_out/cerise.new_queries.fasta | cut -f1 -d' ' | sort | diff - expected_new_queries__clustered_queries.txt
   $ sort -k1,2 cerise_out/cerise.first_search.tsv | cut -f1,2 | diff - expected_first_search__clustered_queries.tsv
   $ sort -k1,2 cerise_out/cerise.second_search.tsv | cut -f1,2 | diff - expected_second_search__clustered_queries.tsv
@@ -67,7 +99,11 @@ Just targets clustered.  See above for not about file names.
 
   $ if [ -d cerise_out ]; then rm -r cerise_out; fi
   $ cerise clustered_queries.fasta clustered_targets.fasta --target-clusters target_clusters.tsv --all-targets targets.fasta --extra-config extra_config.txt > cerise_oe 2>&1
-  $ ls cerise_out | diff - expected_outfiles__clustered_targets.txt
+  $ ls cerise_out
+  cerise.first_search.tsv
+  cerise.new_targets.fasta
+  cerise.second_search.tsv
+  command_logs.txt
   $ grep '^>' cerise_out/cerise.new_targets.fasta | cut -f1 -d' ' | sort | diff - expected_new_targets__clustered_targets.txt
   $ sort -k1,2 cerise_out/cerise.first_search.tsv | cut -f1,2 | diff - expected_first_search__clustered_targets.tsv
   $ sort -k1,2 cerise_out/cerise.second_search.tsv | cut -f1,2 | diff - expected_second_search__clustered_targets.tsv

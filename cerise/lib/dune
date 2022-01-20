@@ -1,6 +1,6 @@
 (library
  (name cerise_lib)
- (libraries bio_io cmdliner core shexp.process command_runner)
+ (libraries bio_io cmdliner core shexp.process command_runner little_logger)
  (instrumentation
   (backend bisect_ppx))
  (preprocess

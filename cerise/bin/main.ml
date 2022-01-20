@@ -1,18 +1,20 @@
 open! Core
 open! Cerise_lib
 
+open! Little_logger
+
 let make_tmpdir () = Filename.temp_dir "cerise" ""
 let make_outfile_name opts suffix =
   Filename.concat opts.Opts.outdir opts.basename ^ suffix
 
 let make_outdir opts = Unix.mkdir_p ~perm:0o775 opts.Opts.outdir
 
-let make_runner ~extra_config ~outdir ~outfile ~search_program ~queries ~targets
-    () : (module Command_runner.Abstract_runner.Instance.S) =
+let make_runner ?stdout ?stderr ~extra_config ~outdir ~outfile ~search_program
+    ~queries ~targets () : (module Command_runner.Abstract_runner.Instance.S) =
   match search_program with
   | "blast" ->
       Blast.Runner.to_abstract_runner
-      @@ Blast.Runner.make ?extra_config
+      @@ Blast.Runner.make ?stdout ?stderr ?extra_config
            {
              makeblastdb_exe = "makeblastdb";
              blastp_exe = "blastp";
@@ -24,11 +26,11 @@ let make_runner ~extra_config ~outdir ~outfile ~search_program ~queries ~targets
   | "mmseqs" ->
       let tmpdir = make_tmpdir () in
       Mmseqs.Runner.to_abstract_runner
-      @@ Mmseqs.Runner.make ?extra_config
+      @@ Mmseqs.Runner.make ?stdout ?stderr ?extra_config
            { exe = "mmseqs"; queries; targets; outfile; tmpdir }
   | "diamond" ->
       Diamond.Runner.to_abstract_runner
-      @@ Diamond.Runner.make ?extra_config
+      @@ Diamond.Runner.make ?stdout ?stderr ?extra_config
            { exe = "diamond"; queries; targets; outdir; outfile }
   | _ -> failwith "search_program must be either mmseqs or blastp"
 
@@ -48,22 +50,23 @@ let make_new_search_infile ~orig_seq_file ~new_seq_file ~new_seqs
                 Stdio.Out_channel.output_string oc @@ Record.to_string_nl record));
       new_seq_file
 
-let run_first_search ~extra_config ~opts =
+let run_first_search ?stdout ?stderr ~extra_config ~opts () =
   let first_search_outfile = make_outfile_name opts ".first_search.tsv" in
   let first_search_runner =
-    make_runner ~extra_config ~outdir:opts.outdir ~outfile:first_search_outfile
-      ~search_program:opts.search_program ~queries:opts.queries
-      ~targets:opts.targets ()
+    make_runner ?stdout ?stderr ~extra_config ~outdir:opts.outdir
+      ~outfile:first_search_outfile ~search_program:opts.search_program
+      ~queries:opts.queries ~targets:opts.targets ()
   in
   Command_runner.Abstract_runner.run first_search_runner;
   first_search_outfile
 
-let run_second_search ~extra_config ~opts ~new_query_infile ~new_target_infile =
+let run_second_search ?stdout ?stderr ~extra_config ~opts ~new_query_infile
+    ~new_target_infile () =
   let second_search_outfile = make_outfile_name opts ".second_search.tsv" in
   let second_search_runner =
-    make_runner ~extra_config ~outdir:opts.outdir ~outfile:second_search_outfile
-      ~search_program:opts.search_program ~queries:new_query_infile
-      ~targets:new_target_infile ()
+    make_runner ?stdout ?stderr ~extra_config ~outdir:opts.outdir
+      ~outfile:second_search_outfile ~search_program:opts.search_program
+      ~queries:new_query_infile ~targets:new_target_infile ()
   in
   Command_runner.Abstract_runner.run second_search_runner;
   second_search_outfile
@@ -88,22 +91,34 @@ let set_up_second_search ~opts ~first_search_outfile =
   (new_query_infile, new_target_infile)
 
 let run opts =
+  Logger.set_log_level opts.Opts.verbosity;
   (* Set up *)
+  Logger.sinfo "Setting up first search";
   make_outdir opts;
+  let command_logs = Filename.concat opts.outdir "command_logs.txt" in
   let extra_config =
     Option.map opts.extra_config ~f:Command_runner.Extra_config.read
   in
+  Logger.sinfo "Running first search";
   (* First search *)
-  let first_search_outfile = run_first_search ~extra_config ~opts in
+  let first_search_outfile =
+    run_first_search ~stdout:(Append command_logs) ~stderr:(Append command_logs)
+      ~extra_config ~opts ()
+  in
+  Logger.sinfo "Setting up second search";
   (* Set up 2nd search *)
   let new_query_infile, new_target_infile =
     set_up_second_search ~opts ~first_search_outfile
   in
+  Logger.sinfo "Running second search";
   (* 2nd search *)
   let second_search_outfile =
-    run_second_search ~extra_config ~opts ~new_query_infile ~new_target_infile
+    run_second_search ~stdout:(Append command_logs)
+      ~stderr:(Append command_logs) ~extra_config ~opts ~new_query_infile
+      ~new_target_infile ()
   in
-  prerr_endline [%string "The final outfile is %{second_search_outfile}"]
+  Logger.info (fun () ->
+      [%string "The final outfile is %{second_search_outfile}"])
 
 let main () =
   match Cli.parse_cli () with `Run opts -> run opts | `Exit code -> exit code

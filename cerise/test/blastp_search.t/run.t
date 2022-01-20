@@ -7,6 +7,7 @@ Queries and targets clustered (blastp)
   cerise.new_queries.fasta
   cerise.new_targets.fasta
   cerise.second_search.tsv
+  command_logs.txt
   db
   db
   db
@@ -36,6 +37,7 @@ Just queries clustered (blastp)
   cerise.first_search.tsv
   cerise.new_queries.fasta
   cerise.second_search.tsv
+  command_logs.txt
   db
   db
   db
@@ -64,6 +66,7 @@ Just targets clustered (blastp)
   cerise.first_search.tsv
   cerise.new_targets.fasta
   cerise.second_search.tsv
+  command_logs.txt
   db
   db
   db

@@ -59,13 +59,17 @@ module Runner = struct
       blastp_runner : (module Command_runner.Runner.Instance.S);
     }
 
-    let make_makeblastdb_runner config =
-      Command_runner.Runner.make (module Makeblastdb_command) config
+    let make_makeblastdb_runner ?stdout ?stderr config =
+      Command_runner.Runner.make ?stdout ?stderr
+        (module Makeblastdb_command)
+        config
 
-    let make_blastp_runner config ~extra_config =
-      Command_runner.Runner.make ?extra_config (module Blastp_command) config
+    let make_blastp_runner ?stdout ?stderr ~extra_config config =
+      Command_runner.Runner.make ?stdout ?stderr ?extra_config
+        (module Blastp_command)
+        config
 
-    let make ?extra_config
+    let make ?stdout ?stderr ?extra_config
         { makeblastdb_exe; blastp_exe; queries; targets; outdir; outfile } =
       let blastdb_out_basename = Filename.temp_file ~in_dir:outdir "db" "" in
       let makeblastdb_cmd_config =
@@ -84,8 +88,10 @@ module Runner = struct
         }
       in
       {
-        makeblastdb_runner = make_makeblastdb_runner makeblastdb_cmd_config;
-        blastp_runner = make_blastp_runner ~extra_config blastp_cmd_config;
+        makeblastdb_runner =
+          make_makeblastdb_runner ?stdout ?stderr makeblastdb_cmd_config;
+        blastp_runner =
+          make_blastp_runner ?stdout ?stderr ~extra_config blastp_cmd_config;
       }
 
     let run' t =

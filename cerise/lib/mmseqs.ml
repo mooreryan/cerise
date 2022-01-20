@@ -30,8 +30,10 @@ module Runner = struct
 
     type t = (module Command_runner.Runner.Instance.S)
 
-    let make ?extra_config config : t =
-      Command_runner.Runner.make ?extra_config (module Command) config
+    let make ?stdout ?stderr ?extra_config config : t =
+      Command_runner.Runner.make ?stdout ?stderr ?extra_config
+        (module Command)
+        config
   end
 
   include T

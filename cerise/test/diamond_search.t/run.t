@@ -6,6 +6,7 @@ Queries and targets clustered
   cerise.new_queries.fasta
   cerise.new_targets.fasta
   cerise.second_search.tsv
+  command_logs.txt
   db
   db
   db
@@ -26,6 +27,7 @@ clarification.
   cerise.first_search.tsv
   cerise.new_queries.fasta
   cerise.second_search.tsv
+  command_logs.txt
   db
   db
   db
@@ -42,6 +44,7 @@ Just targets clustered.  See above for not about file names.
   cerise.first_search.tsv
   cerise.new_targets.fasta
   cerise.second_search.tsv
+  command_logs.txt
   db
   db
   db

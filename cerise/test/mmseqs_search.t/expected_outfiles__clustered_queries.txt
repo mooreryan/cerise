@@ -1,3 +1,0 @@
-cerise.first_search.tsv
-cerise.new_queries.fasta
-cerise.second_search.tsv

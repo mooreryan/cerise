@@ -12,10 +12,11 @@ type t = {
   extra_config : string option;
   all_queries : string option;
   all_targets : string option;
+  verbosity : Little_logger.Logger.Level.t;
 }
 
 let make queries targets query_clusters target_clusters outdir force basename
-    search_program extra_config all_queries all_targets =
+    search_program extra_config all_queries all_targets verbosity =
   {
     queries;
     targets;
@@ -28,6 +29,7 @@ let make queries targets query_clusters target_clusters outdir force basename
     extra_config;
     all_queries;
     all_targets;
+    verbosity;
   }
 
 (* There are some things that are kind of annoying to check with cmdliner, so
