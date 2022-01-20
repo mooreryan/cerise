@@ -68,6 +68,28 @@ jobs:
           makeblastdb -h
           blastp -h
 
+      - name: Install Diamond (Linux)
+        run: |
+          wget http://github.com/bbuchfink/diamond/releases/download/v2.0.13/diamond-linux64.tar.gz;
+          tar xzf diamond-linux64.tar.gz;
+          mv diamond "$LOCAL_BIN"
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Install Diamond (MacOS)
+        run: |
+          wget http://github.com/bbuchfink/diamond/archive/v2.0.13.tar.gz;
+          tar xzf v2.0.13.tar.gz;
+          cd diamond-2.0.13;
+          mkdir bin;
+          cd bin;
+          cmake -DCMAKE_INSTALL_PREFIX=$HOME ..;
+          make -j4;
+          sudo make install
+        if: matrix.os == 'macos-latest'
+
+      - name: Check Diamond
+        run: "diamond help"
+
       - name: Checkout code
         uses: actions/checkout@v2
         with:
