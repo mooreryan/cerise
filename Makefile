@@ -11,17 +11,9 @@ all: build_release install
 build:
 	dune build
 
-.PHONY: build_mac
-build_mac:
-	dune build -j 1
-
 .PHONY: build_release
 build_release:
 	dune build --profile=release
-
-.PHONY: build_release_mac
-build_release_mac:
-	dune build --profile=release -j 1
 
 .PHONY: check
 check:
@@ -42,10 +34,6 @@ uninstall:
 .PHONY: test
 test:
 	dune runtest
-
-.PHONY: test_mac
-test_mac:
-	dune runtest -j 1
 
 .PHONY: test_coverage
 test_coverage:
