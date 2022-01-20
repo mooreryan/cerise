@@ -18,6 +18,7 @@ let make_runner ~extra_config ~outdir ~outfile ~search_program ~queries ~targets
              blastp_exe = "blastp";
              queries;
              targets;
+             outdir;
              outfile;
              evalue;
            }

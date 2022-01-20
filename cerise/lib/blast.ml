@@ -62,6 +62,7 @@ module Runner = struct
       blastp_exe : string;
       queries : string;
       targets : string;
+      outdir : string;
       outfile : string;
       evalue : float;
     }
@@ -78,8 +79,16 @@ module Runner = struct
       Command_runner.Runner.make ?extra_config (module Blastp_command) config
 
     let make ?extra_config
-        { makeblastdb_exe; blastp_exe; queries; targets; outfile; evalue } =
-      let blastdb_out_basename = targets ^ ".bdb" in
+        {
+          makeblastdb_exe;
+          blastp_exe;
+          queries;
+          targets;
+          outdir;
+          outfile;
+          evalue;
+        } =
+      let blastdb_out_basename = Filename.temp_file ~in_dir:outdir "db" "" in
       let makeblastdb_cmd_config =
         {
           Makeblastdb_command.exe = makeblastdb_exe;
