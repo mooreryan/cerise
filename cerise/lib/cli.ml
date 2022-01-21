@@ -60,12 +60,23 @@ let outdir_term =
   Arg.(
     value & opt string "cerise_out" & info [ "o"; "outdir" ] ~docv:"OUTDIR" ~doc)
 
+(* TODO probably rename to search_config. *)
 let extra_config_term =
-  let doc = "Extra config pairs for search program" in
+  let doc =
+    "Extra config options for search program.  This option is pretty flexible \
+     on the way it accepts arguments.  Genrally as long as you use an equals \
+     sign (=) and single quotes, you will be alright to specify the search \
+     program opts as you normally would.  Here are some \
+     examples:--search-config='-s 7',--search-config='-num_threads 4 -evalue \
+     1e-10', --search-config='--thread=10 -x -y 3 --color green'.  $(b,VERY \
+     IMPORTANT: do not pass in any options that will change the output format \
+     of the search program.)  If you do, Cerise will likely raise an exception \
+     or otherwise break in unexpected ways."
+  in
   Arg.(
     value
-    & opt (some non_dir_file) None
-    & info [ "extra-config" ] ~docv:"EXTRA_CONFIG" ~doc)
+    & opt (some string) None
+    & info [ "search-config" ] ~docv:"SEARCH_CONFIG" ~doc)
 
 let query_clusters_term =
   let doc = "Path to query sequence cluster info" in

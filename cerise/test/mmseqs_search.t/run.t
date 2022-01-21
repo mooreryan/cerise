@@ -45,7 +45,7 @@ Missing "all seqs" files.
 Queries and targets clustered
 
   $ if [ -d cerise_out ]; then rm -r cerise_out; fi
-  $ cerise clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --extra-config extra_config.txt > cerise_oe 2>&1
+  $ cerise clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --search-config='-s=1 --threads=4' > cerise_oe 2>&1
   $ ls cerise_out
   cerise.first_search.tsv
   cerise.new_queries.fasta
@@ -60,7 +60,7 @@ Queries and targets clustered
 Queries and targets clustered (verbose)
 
   $ if [ -d cerise_out ]; then rm -r cerise_out; fi
-  $ cerise -vv clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --extra-config extra_config.txt > cerise_oe 2>&1
+  $ cerise -vv clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --search-config='-s=1 --threads=4' > cerise_oe 2>&1
   $ ../helpers/sanitize_logs cerise_oe
   I, [DATE TIME PID] INFO -- Setting up first search
   I, [DATE TIME PID] INFO -- Running first search
@@ -85,7 +85,7 @@ easier, but I'm treating them as non-clustered...see the options for
 clarification.
 
   $ if [ -d cerise_out ]; then rm -r cerise_out; fi
-  $ cerise clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --all-queries queries.fasta --extra-config extra_config.txt > cerise_oe 2>&1
+  $ cerise clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --all-queries queries.fasta --search-config='-s=1 --threads=4' > cerise_oe 2>&1
   $ ls cerise_out
   cerise.first_search.tsv
   cerise.new_queries.fasta
@@ -98,7 +98,7 @@ clarification.
 Just targets clustered.  See above for not about file names.
 
   $ if [ -d cerise_out ]; then rm -r cerise_out; fi
-  $ cerise clustered_queries.fasta clustered_targets.fasta --target-clusters target_clusters.tsv --all-targets targets.fasta --extra-config extra_config.txt > cerise_oe 2>&1
+  $ cerise clustered_queries.fasta clustered_targets.fasta --target-clusters target_clusters.tsv --all-targets targets.fasta --search-config='-s=1 --threads=4' > cerise_oe 2>&1
   $ ls cerise_out
   cerise.first_search.tsv
   cerise.new_targets.fasta

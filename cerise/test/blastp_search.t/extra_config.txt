@@ -1,2 +1,0 @@
--num_threads=1
--evalue=1e-3

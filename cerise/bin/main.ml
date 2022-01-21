@@ -97,7 +97,7 @@ let run opts =
   make_outdir opts;
   let command_logs = Filename.concat opts.outdir "command_logs.txt" in
   let extra_config =
-    Option.map opts.extra_config ~f:Command_runner.Extra_config.read
+    Option.map opts.extra_config ~f:Command_runner.Extra_config.of_string
   in
   Logger.sinfo "Running first search";
   (* First search *)
