@@ -19,4 +19,8 @@
   (shexp (>= "v0.14"))
   (stdio (>= "v0.14"))
   ; Test only deps
-  (bisect_ppx :with-test)))
+  (bisect_ppx :with-test)
+  (ppx_assert (and (>= "v0.12") :with-test))
+  (ppx_inline_test (and (>= "v0.12") :with-test))
+  (ppx_expect (and (>= "v0.12") :with-test))))
+

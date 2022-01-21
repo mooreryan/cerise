@@ -1,31 +1,3 @@
-CLI errors
-
-  $ cerise
-  cerise: required arguments QUERIES, TARGETS are missing
-  Usage: cerise [OPTION]... QUERIES TARGETS
-  Try `cerise --help' for more information.
-  [1]
-  $ cerise a
-  cerise: required argument TARGETS is missing
-  Usage: cerise [OPTION]... QUERIES TARGETS
-  Try `cerise --help' for more information.
-  [1]
-  $ cerise a b
-  cerise: QUERIES argument: no `a' file
-  Usage: cerise [OPTION]... QUERIES TARGETS
-  Try `cerise --help' for more information.
-  [1]
-  $ cerise queries.fasta b
-  cerise: TARGETS argument: no `b' file
-  Usage: cerise [OPTION]... QUERIES TARGETS
-  Try `cerise --help' for more information.
-  [1]
-  $ cerise a targets.fasta
-  cerise: QUERIES argument: no `a' file
-  Usage: cerise [OPTION]... QUERIES TARGETS
-  Try `cerise --help' for more information.
-  [1]
-
 Missing cluster info
 
   $ cerise queries.fasta targets.fasta 2> err
@@ -107,3 +79,21 @@ Just targets clustered.  See above for not about file names.
   $ grep '^>' cerise_out/cerise.new_targets.fasta | cut -f1 -d' ' | sort | diff - expected_new_targets__clustered_targets.txt
   $ sort -k1,2 cerise_out/cerise.first_search.tsv | cut -f1,2 | diff - expected_first_search__clustered_targets.tsv
   $ sort -k1,2 cerise_out/cerise.second_search.tsv | cut -f1,2 | diff - expected_second_search__clustered_targets.tsv
+
+Bad query clusters.
+
+  $ if [ -d cerise_out ]; then rm -r cerise_out; fi
+  $ cerise -vv clustered_queries.fasta clustered_targets.fasta --query-clusters bad_query_clusters.tsv --target-clusters target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --search-config='-s=1 --threads=4' > cerise_oe 2>&1
+  [2]
+  $ grep -A1 Failure cerise_oe | sed -E 's/^ +//'
+  (Failure "bad line in clusters file 'apple\tpie\tgood'")
+  
+
+Bad target clusters.
+
+  $ if [ -d cerise_out ]; then rm -r cerise_out; fi
+  $ cerise -vv clustered_queries.fasta clustered_targets.fasta --query-clusters query_clusters.tsv --target-clusters bad_target_clusters.tsv --all-queries queries.fasta --all-targets targets.fasta --search-config='-s=1 --threads=4' > cerise_oe 2>&1
+  [2]
+  $ grep -A1 Failure cerise_oe | sed -E 's/^ +//'
+  (Failure "bad line in clusters file 'apple\tpie\tgood'")
+  

@@ -14,6 +14,9 @@ depends: [
   "shexp" {>= "v0.14"}
   "stdio" {>= "v0.14"}
   "bisect_ppx" {with-test}
+  "ppx_assert" {>= "v0.12" & with-test}
+  "ppx_inline_test" {>= "v0.12" & with-test}
+  "ppx_expect" {>= "v0.12" & with-test}
   "odoc" {with-doc}
 ]
 build: [

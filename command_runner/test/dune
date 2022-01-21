@@ -1,0 +1,5 @@
+(library
+ (name test_command_runner)
+ (libraries command_runner base stdio)
+ (inline_tests (deps test_files/printer.sh))
+ (preprocess (pps ppx_assert ppx_inline_test ppx_expect)))

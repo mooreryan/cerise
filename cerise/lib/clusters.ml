@@ -19,7 +19,7 @@ let read fname : t option =
                   Map.update m rep ~f:(function
                     | None -> Set.of_list (module String) [ rep; member ]
                     | Some members -> Set.add members member)
-              | _ -> failwith [%string "bad line in clusters file %{line}"])))
+              | _ -> failwith [%string "bad line in clusters file '%{line}'"])))
 
 (* For now just get any hits in the file. Eventually, we probably want to give
    user option to select by evalue or percent identity or whatever. *)
