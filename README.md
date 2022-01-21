@@ -51,10 +51,10 @@ cd cerise
 opam install . --deps-only --with-doc --with-test
 ```
 
-#### Build, install, & run tests
+#### Build and install
 
 ```
-make test && make build_release && make install
+make build_release && make install
 ```
 
 #### Sanity check
