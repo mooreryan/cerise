@@ -70,8 +70,8 @@ let extra_config_term =
      examples:--search-config='-s 7',--search-config='-num_threads 4 -evalue \
      1e-10', --search-config='--thread=10 -x -y 3 --color green'.  $(b,VERY \
      IMPORTANT: do not pass in any options that will change the output format \
-     of the search program.)  If you do, Cerise will likely raise an exception \
-     or otherwise break in unexpected ways."
+     of the search program.)  If you do, Cerise will raise an exception or \
+     otherwise break in unexpected ways."
   in
   Arg.(
     value

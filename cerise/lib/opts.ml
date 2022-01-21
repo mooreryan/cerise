@@ -67,9 +67,46 @@ let check opts =
     | "blast" | "mmseqs" | "diamond" -> ()
     | _ -> failwith "--search-program must be one of blast, mmseqs, or diamond"
   in
+  let check_extra_config opts =
+    match opts.extra_config with
+    | None -> ()
+    | Some extra_config -> (
+        match opts.search_program with
+        | "blast" ->
+            let has_bad_opts config =
+              String.is_substring ~substring:"-outfmt" config
+              || String.is_substring ~substring:"-html" config
+            in
+            if has_bad_opts extra_config then
+              failwith
+                "You are not allowed to include -outfmt or -html in the search \
+                 config for blastp."
+        | "diamond" ->
+            let has_bad_opts config =
+              String.is_substring ~substring:"--outfmt" config
+              || String.is_substring ~substring:"--header" config
+            in
+            if has_bad_opts extra_config then
+              failwith
+                "You are not allowed to include --outfmt or --header in the \
+                 search config for diamond."
+        | "mmseqs" ->
+            let has_bad_opts config =
+              String.is_substring ~substring:"--format-mode" config
+              || String.is_substring ~substring:"--format-output" config
+            in
+            if has_bad_opts extra_config then
+              failwith
+                "You are not allowed to include --format-mode or \
+                 --format-output in the search config for MMseqs2."
+        | _ ->
+            failwith "--search-program must be one of blast, mmseqs, or diamond"
+        )
+  in
   check_cluster_inputs opts;
   check_outdir opts;
   check_queries opts;
   check_targets opts;
   check_search_program opts;
+  check_extra_config opts;
   ()
