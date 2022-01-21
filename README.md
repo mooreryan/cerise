@@ -14,9 +14,9 @@ Cerise is heavily inspired by [Rubble](https://github.com/dnasko/rubble), the or
 
 You need to have one of following homology search tools installed and available on your `PATH`.
 
-* NCBI BLAST
-* Mmseqs2
-* Diamond
+* [NCBI BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
+* [Mmseqs2](https://github.com/soedinglab/MMseqs2)
+* [Diamond](https://github.com/bbuchfink/diamond)
 
 ### Download a pre-compiled binary (easy)
 
@@ -73,9 +73,9 @@ For background and motivation see the [Rubble manuscript](https://doi.org/10.110
 
 Rubble let you search query sequences against a clustered DB.  Cerise allows you to search queries against clustered targets, clustered queries against targets, and clustered queries against clustered targets.
 
-Prior to you search, you will need to cluster your query sequences, target sequences, or both, depending on how you want to run the search.
+Prior to your search, you will need to cluster your query sequences, target sequences, or both, depending on how you want to run the search.
 
-For this, I generally use `mmseqs easy-cluster`.  You can use anything, but your favorite clustering program needs to be able to output a TSV with clustering info.  The format should be two columns: cluster representative, cluster member.
+For this, I generally use `mmseqs easy-cluster`.  You can use anything, but your favorite clustering program needs to be able to output a TSV with clustering info.  The format should be two columns: cluster representative, cluster member.  [Here](https://github.com/mooreryan/cerise/blob/readme/cerise/test/mmseqs_search.t/query_clusters.tsv) is an example of what the file should look like.
 
 ### Searching
 
@@ -100,14 +100,20 @@ A couple of things to note here:
 * `--all-queries` and `--all-targets` refer to the original, non-clustered files
 * `--query-clusters` and `--target-clusters` refer to the TSV files describing the clusters
 * `clustered_queries.fasta` and `clustered_targets.fasta` are the cluster representative sequences
-* `--search-config` lets you pass in command line options to the search program
+* `--search-config` lets you pass in command line options to the search program.  You can pass in whatever you want here (as long as they are valid options for the search program you're using) and they will be passed pretty much as-is to the search program. In this case, I'm setting `mmseqs` to use 4 threads, with 3 iterations, and a sensitivity setting of 7, which is a very sensitive search.
 * `--search-program` lets you select which homology search program to use.  Note that it must be on your `PATH` (e.g., `which mmseqs` will work).
 
 For more info on command line usage, see the help screen by running `cerise --help`.
 
+### More examples
+
+There are a ton of examples on how to run (and how to break) Cerise in the [test](https://github.com/mooreryan/cerise/tree/main/cerise/test) directory of this repository.  In this directory, you will see directories ending in `*.t`.  Each of these specifies a self contained set of tests, including all the files needed to run tests in that directory.  You will also find a `run.t` in each of the subdirectories.  These files are where you will find the examples exercising the behavior of the `cerise` command line app.  See [here](https://bitheap.org/cram/) for info on how to read these files.
+
 ## Citation
 
-If you use Cerise, please cite the Rubble [preprint](https://doi.org/10.1101/426098).  Thank you!!
+Cerise and the homology programs it uses are all research software.  As such, if you use Cerise, please cite the Rubble [preprint](https://doi.org/10.1101/426098), and cite the appropriate manuscript for whichever search program you are using.
+
+Thank you!!
 
 ## License
 
