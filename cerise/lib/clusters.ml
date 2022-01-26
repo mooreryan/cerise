@@ -44,7 +44,7 @@ let maybe_keep_cluster_members ~centroid ~clusters ~keep =
 (* After the first homology search, run this to figure out which seqs to use in
    the next round. *)
 let get_new_search_input_seq_ids ~query_clusters ~target_clusters btab_fname =
-  let init =
+  let clusters =
     match (query_clusters, target_clusters) with
     | None, None ->
         failwith "you should provide either query or target clusters"
@@ -53,13 +53,18 @@ let get_new_search_input_seq_ids ~query_clusters ~target_clusters btab_fname =
     | Some _, Some _ ->
         (Some (Set.empty (module String)), Some (Set.empty (module String)))
   in
-  In_channel.with_file btab_fname ~f:(fun ic ->
-      In_channel.fold_lines ic ~init
-        ~f:(fun (keep_queries, keep_targets) line ->
-          match String.split ~on:'\t' line with
-          | query :: target :: _rest ->
-              ( maybe_keep_cluster_members ~centroid:query
-                  ~clusters:query_clusters ~keep:keep_queries,
-                maybe_keep_cluster_members ~centroid:target
-                  ~clusters:target_clusters ~keep:keep_targets )
-          | _ -> failwith "bad btab file"))
+  let count, clusters =
+    In_channel.with_file btab_fname ~f:(fun ic ->
+        In_channel.fold_lines ic ~init:(0, clusters)
+          ~f:(fun (i, (keep_queries, keep_targets)) line ->
+            match String.split ~on:'\t' line with
+            | query :: target :: _rest ->
+                ( i + 1,
+                  ( maybe_keep_cluster_members ~centroid:query
+                      ~clusters:query_clusters ~keep:keep_queries,
+                    maybe_keep_cluster_members ~centroid:target
+                      ~clusters:target_clusters ~keep:keep_targets ) )
+            | _ -> failwith "bad btab file"))
+  in
+  if count > 0 then clusters
+  else Utils.abort "ERROR: there were no hits of your queries to your targets"

@@ -105,6 +105,25 @@ A couple of things to note here:
 
 For more info on command line usage, see the help screen by running `cerise --help`.
 
+### Premade target databases
+
+If you use `mmseqs`, you can use a premade target database.  Simply pass in the path of the target DB and it will work fine.  Here is an example where I make a search DB first, then run Cerise as before.
+
+```
+$ mmseqs createdb clustered_targets.fasta clustered_targets.db
+$ cerise \
+    clustered_queries.fasta \
+    clustered_targets.db \
+    --query-clusters=query_clusters.tsv \
+    --target-clusters=target_clusters.tsv \
+    --all-queries=queries.fasta \
+    --all-targets=targets.fasta \
+    --search-config='--threads 4 -s 7 --num-iterations 3' \
+    --search-program=mmseqs
+```
+
+*Using premade DBs in this way is not yet supported when using `blast` or `diamond`.*
+
 ### More examples
 
 There are a ton of examples on how to run (and how to break) Cerise in the [test](https://github.com/mooreryan/cerise/tree/main/cerise/test) directory of this repository.  In this directory, you will see directories ending in `*.t`.  Each of these specifies a self contained set of tests, including all the files needed to run tests in that directory.  You will also find a `run.t` in each of the subdirectories.  These files are where you will find the examples exercising the behavior of the `cerise` command line app.  See [here](https://bitheap.org/cram/) for info on how to read these files.

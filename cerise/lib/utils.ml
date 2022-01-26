@@ -1,5 +1,9 @@
 open! Core
 
+let abort ?(exit_code = 1) msg =
+  let () = eprintf "%s\n" msg in
+  Caml.exit exit_code
+
 (* See
    https://github.com/ocaml/dune/commit/154272b779fe8943a9ce1b4afabb30150ab94ba6 *)
 

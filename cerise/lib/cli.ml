@@ -52,7 +52,12 @@ let queries_term =
   Arg.(required & pos 0 (some non_dir_file) None & info [] ~docv:"QUERIES" ~doc)
 
 let targets_term =
-  let doc = "Path to target sequences" in
+  let doc =
+    "Path to target sequences/db.  If you use the 'mmseqs' option, this can \
+     either be the path to sequenecs in a FASTA file, or a MMseqs2 sequence \
+     database.  If you use an already existing database, then it will skip the \
+     database construction step."
+  in
   Arg.(required & pos 1 (some non_dir_file) None & info [] ~docv:"TARGETS" ~doc)
 
 let outdir_term =
